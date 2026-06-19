@@ -17,36 +17,36 @@ netflow2ng is a NetFlow v9/IPFIX collector that forwards flow data to [ntopng](h
 
 ### `cmd/`
 **Main application entry point**
-- [netflow2ng.go](../cmd/netflow2ng.go) - CLI parsing (using Kong), application initialization, and main loop. Sets up the NetFlow listener, formatter, transport, and Prometheus metrics server.
+- [netflow2ng.go](cmd/netflow2ng.go) - CLI parsing (using Kong), application initialization, and main loop. Sets up the NetFlow listener, formatter, transport, and Prometheus metrics server.
 
 ### `formatter/`
 **Output formatters for ntopng compatibility**
-- [formatter.go](../formatter/formatter.go) - Common formatter utilities and registration. Handles conversion from goflow2's `ProtoProducerMessage` to our `ExtendedFlowMessage`.
-- [ntopng_tlv.go](../formatter/ntopng_tlv.go) - TLV (Type-Length-Value) format encoder for ntopng. This is the default and recommended format.
-- [ntopng_json.go](../formatter/ntopng_json.go) - JSON format encoder for ntopng (legacy, for ntopng v6.3 and earlier).
-- [mapping.yaml](../formatter/mapping.yaml) - Field mapping configuration for goflow2's protobuf producer. Remaps IN/OUT bytes/packets fields to avoid overwrites.
+- [formatter.go](formatter/formatter.go) - Common formatter utilities and registration. Handles conversion from goflow2's `ProtoProducerMessage` to our `ExtendedFlowMessage`.
+- [ntopng_tlv.go](formatter/ntopng_tlv.go) - TLV (Type-Length-Value) format encoder for ntopng. This is the default and recommended format.
+- [ntopng_json.go](formatter/ntopng_json.go) - JSON format encoder for ntopng (legacy, for ntopng v6.3 and earlier).
+- [mapping.yaml](formatter/mapping.yaml) - Field mapping configuration for goflow2's protobuf producer. Remaps IN/OUT bytes/packets fields to avoid overwrites.
 
 ### `transport/`
 **ZeroMQ transport layer**
-- [transport.go](../transport/transport.go) - Transport driver registration and logger setup.
-- [zmq.go](../transport/zmq.go) - ZMQ publisher implementation. Handles message framing with ntopng's `zmqHeaderV3` format, optional zlib compression, and multi-part message sending.
+- [transport.go](transport/transport.go) - Transport driver registration and logger setup.
+- [zmq.go](transport/zmq.go) - ZMQ publisher implementation. Handles message framing with ntopng's `zmqHeaderV3` format, optional zlib compression, and multi-part message sending.
 
 ### `proto/`
 **Protocol Buffer definitions**
-- [extended_flow.proto](../proto/extended_flow.proto) - Extends goflow2's `FlowMessage` with remapped IN/OUT byte/packet counters.
-- [extended_flow.pb.go](../proto/extended_flow.pb.go) - Auto-generated Go bindings (regenerate with `make protobuf`).
+- [extended_flow.proto](proto/extended_flow.proto) - Extends goflow2's `FlowMessage` with remapped IN/OUT byte/packet counters.
+- [extended_flow.pb.go](proto/extended_flow.pb.go) - Auto-generated Go bindings (regenerate with `make protobuf`).
 
 ### `package/`
 **Deployment and packaging files**
-- [Dockerfile](../package/Dockerfile) - Multi-stage Docker build for creating distributable packages.
-- [netflow2ng.service](../package/netflow2ng.service) - systemd service unit file.
-- [netflow2ng.env](../package/netflow2ng.env) - Environment variable configuration template.
+- [Dockerfile](package/Dockerfile) - Multi-stage Docker build for creating distributable packages.
+- [netflow2ng.service](package/netflow2ng.service) - systemd service unit file.
+- [netflow2ng.env](package/netflow2ng.env) - Environment variable configuration template.
 
 ### Root Files
-- [Makefile](../Makefile) - Build targets for compilation, testing, Docker, and package creation.
-- [Dockerfile](../Dockerfile) - Development/runtime Docker image.
-- [docker-compose.yaml](../docker-compose.yaml) - Docker Compose configuration for running with ntopng.
-- [go.mod](../go.mod) - Go module dependencies.
+- [Makefile](Makefile) - Build targets for compilation, testing, Docker, and package creation.
+- [Dockerfile](Dockerfile) - Development/runtime Docker image.
+- [docker-compose.yaml](docker-compose.yaml) - Docker Compose configuration for running with ntopng.
+- [go.mod](go.mod) - Go module dependencies.
 
 ## Key Dependencies
 
@@ -79,7 +79,7 @@ netflow2ng is a NetFlow v9/IPFIX collector that forwards flow data to [ntopng](h
 |------|----------|---------|
 | 2055 | UDP | NetFlow v9/IPFIX listener |
 | 5556 | TCP | ZMQ publisher for ntopng |
-| 8080 | TCP | Prometheus metrics & `/templates` endpoint |
+| 8080 | TCP | Prometheus `/metrics`, `/templates`, & `/__health` endpoints |
 
 ## Building
 
